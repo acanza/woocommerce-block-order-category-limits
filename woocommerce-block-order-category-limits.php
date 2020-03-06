@@ -22,22 +22,37 @@ if ( in_array( 'woocommerce/woocommerce.php', get_option( 'active_plugins' ) ) )
 			18 => 15,
 			10 => 13
 		);
-		$cart_contents = WC()->cart->get_cart_contents();
+        $cart_contents = WC()->cart->get_cart_contents();
+        $categories_quantities = get_items_quantity_by_category( $cart_contents );
 
-		if ( !empty( $cart_contents ) ) {
-			foreach ( $cart_contents as $key => $line_item ) {
-				$product = $line_item['data'];
-
-				foreach ($product->get_category_ids() as $category ) {
-					if ( $amount_limit = array_search( $category, $categories_limits ) ) {
-						if ( $line_item['quantity'] > $amount_limit ) {
-							return array();
-						}
-					}
+		foreach ( $categories_quantities as $category => $quantity ) {
+			if ( $amount_limit = array_search( $category, $categories_limits ) ) {
+				if ( $quantity > $amount_limit ) {
+					return array();
 				}
 			}
 		}
 
 		return $_available_gateways;
-	}
+    }
+    
+    function get_items_quantity_by_category( $cart_contents ){
+        $categories_quantities = array();
+
+        if ( !empty( $cart_contents ) ) {
+			foreach ( $cart_contents as $line_item ) {
+				$product = $line_item['data'];
+
+				foreach ( $product->get_category_ids() as $category ) {
+                    if ( !isset( $categories_quantities[$category] ) ) {
+                        $categories_quantities[$category] = $line_item['quantity'];
+                    } else {
+                        $categories_quantities[$category] += $line_item['quantity']; 
+                    } 
+				}
+			}
+        }
+        
+        return $categories_quantities;
+    }
 }
