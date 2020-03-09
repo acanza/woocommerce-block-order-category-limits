@@ -18,16 +18,18 @@ if ( in_array( 'woocommerce/woocommerce.php', get_option( 'active_plugins' ) ) )
 		 * uds. de compra y el valor con el ID de la categoría.
 		 * */
 		$categories_limits = array(
-			14 => 11,
-			18 => 15,
-			10 => 13
+			10 => 15,
+			13 => 15,
+			12 => 12
 		);
         $cart_contents = WC()->cart->get_cart_contents();
-        $categories_quantities = get_items_quantity_by_category( $cart_contents );
+		$categories_quantities = get_items_quantity_by_category( $cart_contents );
 
 		foreach ( $categories_quantities as $category => $quantity ) {
-			if ( $amount_limit = array_search( $category, $categories_limits ) ) {
-				if ( $quantity > $amount_limit ) {
+			$category_ids = array_keys( $categories_limits );
+			
+			if ( in_array( $category, $category_ids ) ) {
+				if ( $quantity > $categories_limits[ $category ] ) {
 					return array();
 				}
 			}
