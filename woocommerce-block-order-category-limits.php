@@ -3,10 +3,11 @@
  * Plugin Name: WooCommerce Block Order by Category Limits
  * Plugin URI: https://woodemia.com/
  * Description: Permite bloquear la compra cuando el carrito supera un límite de unidades de producto por categoría.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Woodemia
  * Author URI: https://woodemia.com
  * Text Domain: wcbocl
+ * WC tested up to: 4.0
  */
 
 if ( in_array( 'woocommerce/woocommerce.php', get_option( 'active_plugins' ) ) ){
@@ -22,7 +23,8 @@ if ( in_array( 'woocommerce/woocommerce.php', get_option( 'active_plugins' ) ) )
 			13 => 15,
 			12 => 12
 		);
-        $cart_contents = WC()->cart->get_cart_contents();
+		
+        $cart_contents = isset( WC()->cart )? WC()->cart->get_cart_contents() : array();
 		$categories_quantities = get_items_quantity_by_category( $cart_contents );
 
 		foreach ( $categories_quantities as $category => $quantity ) {
